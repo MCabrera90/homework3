@@ -1,23 +1,24 @@
 <script setup>
   import {ref} from 'vue'
 
-  //variables
+  
   const myArray = ref([])
   const name = ref('')
   const input_content = ref('')
   const input_category = ref(null)
 
-  //function to add user input to list
+  
   const addTodo = () =>{
-    if(input_content.value.trim() === ''|| input_category.value == null){
+    if(input_content.value.trim() === '' || input_category.value == null){
       return
     }
-    //add user input to array
+    
     myArray.value.push({
       content: input_content.value,
       category: input_category.value,
+      done: false
     })
-    //clear user's input from the form
+    
     input_content.value = ''
     input_category.value = null
   }
@@ -37,28 +38,44 @@
       <h3>CREATE A TO DO LIST</h3>
       <form @submit.prevent = "addTodo">
         <h4>What's on your to do list?</h4>
-        <input type="text" placeholder="e.g., Make a Video" v-model="input_contect">
+        <input type="text" placeholder="e.g., Make a Video" v-model="input_content"/>
 
         <h4>Pick a Category</h4>
+
         <div class="options">
           <label>
-            <input type="radio" name="category" value="business" v-model="input_category">
+            <input type="radio" name="category" value="business" v-model="input_category"/>
             <span class="bubble business"></span>
             <div>Business</div>
           </label>
           <label>
-            <input type="radio" name="category" value="personal" v-model="input_category">
+            <input type="radio" name="category" value="personal" v-model="input_category"/>
             <span class="bubble personal"></span>
             <div>Personal</div>
           </label>
         </div>
+        
         <input type="submit" value="Add To Do"/>
+      
       </form>
       
     </section>
 
     <section class="todo-list">
+      <div class="list">
+        <div v-for="x in myArray" :class="`todo-item ${x.done ? 'done' : 'not-done'}`" :key="x">
+          <label> 
+            <input type="checkbox" v-model= "x.done"/>
+            <span :class="`bubble ${x.category}`"></span>
+          </label>
+          <div class="todo-content">
+            <input type="text" v-model="x.content"/>
+          </div>
 
+        </div>
+
+
+      </div>
     </section>
   </main>
 
