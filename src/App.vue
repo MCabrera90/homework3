@@ -1,27 +1,46 @@
 <script setup>
-  import {ref} from 'vue'
+  import {ref, onMounted, watch} from 'vue'
 
-  
+  //variables
   const myArray = ref([])
   const name = ref('')
   const input_content = ref('')
   const input_category = ref(null)
 
-  
+  //function to add to do item to list
   const addTodo = () =>{
+    //if input fields are blank, the function does nothing
     if(input_content.value.trim() === '' || input_category.value == null){
       return
     }
-    
+    //add item to list
     myArray.value.push({
       content: input_content.value,
       category: input_category.value,
       done: false
     })
-    
+    //clear user input from input fields
     input_content.value = ''
     input_category.value = null
   }
+
+  //function to remove item from to do list
+  const removeTodo = (item) =>{
+    myArray.value = myArray.value.filter(Element => Element !== item)
+  }
+
+  onMounted( () =>{
+    name.value = localStorage.getItem('name') || ''
+    myArray.value = JSON.parse(localStorage.getItem('myArray')) || []
+  })
+
+  watch(name, (newVal) =>{
+    localStorage.setItem('name', newVal)
+  })
+
+  watch(myArray, (newVal) =>{
+    localStorage.setItem('myArray', JSON.stringify(newVal))
+  }, {deep: true})
 
 </script>
 
@@ -39,9 +58,8 @@
       <form @submit.prevent = "addTodo">
         <h4>What's on your to do list?</h4>
         <input type="text" placeholder="e.g., Make a Video" v-model="input_content"/>
-
+        
         <h4>Pick a Category</h4>
-
         <div class="options">
           <label>
             <input type="radio" name="category" value="business" v-model="input_category"/>
@@ -71,9 +89,11 @@
           <div class="todo-content">
             <input type="text" v-model="x.content"/>
           </div>
-
+          <div class="actions"> 
+            <button class="delete" @click="removeTodo(x)">Delete</button>
+          </div>
         </div>
-
+        
 
       </div>
     </section>
